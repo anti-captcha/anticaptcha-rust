@@ -59,6 +59,10 @@ mod error;
 mod solution;
 mod tasks;
 
+/// Re-exported so you can build `variables` and `init_parameters` without
+/// adding `serde_json` to your own `Cargo.toml`.
+pub use serde_json;
+
 pub use client::Client;
 pub use error::{Error, Result};
 pub use solution::Solution;
