@@ -1,0 +1,41 @@
+[package]
+name = "anticaptchaofficial"
+version = "1.0.0"
+edition = "2021"
+# Our own code builds on much older toolchains, but the default dependency
+# resolution pulls in icu/idna through reqwest, and those need 1.86.
+rust-version = "1.86"
+description = "Official Anti-Captcha.com API client: image captchas, Recaptcha v2/v3 Enterprise, hCaptcha, FunCaptcha, GeeTest, Turnstile, Amazon WAF, Prosopo, Friendly Captcha, Altcha and AntiGate tasks"
+license = "MIT"
+repository = "https://github.com/anti-captcha/anticaptcha-rust"
+homepage = "https://anti-captcha.com"
+documentation = "https://docs.rs/anticaptchaofficial"
+readme = "README.md"
+keywords = ["captcha", "recaptcha", "hcaptcha", "anticaptcha", "turnstile"]
+categories = ["api-bindings", "web-programming::http-client"]
+exclude = ["examples/*.jpg"]
+
+[lib]
+name = "anticaptcha"
+
+[features]
+default = ["rustls-tls"]
+# TLS backend, pick one
+rustls-tls = ["reqwest/rustls-tls"]
+native-tls = ["reqwest/native-tls"]
+# Adds anticaptcha::blocking, a synchronous mirror of the async API
+blocking = ["tokio/rt", "tokio/net", "tokio/time"]
+
+[dependencies]
+base64 = "0.22"
+reqwest = { version = "0.12", default-features = false, features = ["json", "charset", "http2"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tokio = { version = "1", features = ["time"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
+[package.metadata.docs.rs]
+all-features = true
