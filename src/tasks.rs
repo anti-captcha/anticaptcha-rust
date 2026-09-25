@@ -114,6 +114,7 @@ pub struct RecaptchaV2 {
     /// The `data-sitekey` value.
     pub website_key: String,
     pub website_s_token: String,
+    /// For Enterprise tasks it is sent only when `true`.
     pub is_invisible: bool,
     /// The `data-s` parameter, typical for google.com websites.
     pub data_s_value: String,
@@ -410,8 +411,12 @@ pub(crate) fn build_recaptcha_v2(settings: &RecaptchaV2, proxy_on: bool) -> Resu
         ("type", json!(task_type)),
         ("websiteURL", json!(settings.website_url)),
         ("websiteKey", json!(settings.website_key)),
-        ("isInvisible", json!(settings.is_invisible)),
     ]);
+
+    // Enterprise tasks take isInvisible only when it is true.
+    if !settings.is_enterprise || settings.is_invisible {
+        task.insert("isInvisible".into(), json!(settings.is_invisible));
+    }
 
     set_if_not_empty(&mut task, "websiteSToken", &settings.website_s_token);
     set_if_not_empty(&mut task, "recaptchaDataSValue", &settings.data_s_value);
@@ -840,6 +845,17 @@ mod tests {
         assert_eq!(task["type"], "RecaptchaV2EnterpriseTaskProxyless");
         assert_eq!(task["enterprisePayload"]["s"], "TOKEN");
         assert_eq!(task["apiDomain"], "recaptcha.net");
+        assert!(task.get("isInvisible").is_none());
+
+        let invisible = RecaptchaV2 {
+            is_invisible: true,
+            proxy: proxy(),
+            ..settings
+        };
+        let task = build_recaptcha_v2(&invisible, true).unwrap();
+
+        assert_eq!(task["type"], "RecaptchaV2EnterpriseTask");
+        assert_eq!(task["isInvisible"], true);
     }
 
     #[test]

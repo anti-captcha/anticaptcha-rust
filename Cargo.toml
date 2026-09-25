@@ -1,6 +1,6 @@
 [package]
 name = "anticaptchaofficial"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 # Our own code builds on much older toolchains, but the default dependency
 # resolution pulls in icu/idna through reqwest, and those need 1.86.

@@ -199,13 +199,15 @@ async fn recaptcha_v2_enterprise() -> Result<()> {
     let ac = client();
 
     let mut enterprise_payload = BTreeMap::new();
-    enterprise_payload.insert("s".to_owned(), "SOME_ADDITIONAL_TOKEN".to_owned());
+    enterprise_payload.insert("s".to_owned(), "TEMPORARY_TOKEN_VALUE_IF_PRESENT".to_owned());
+    enterprise_payload.insert("action".to_owned(), "form_submit".to_owned());
 
     let solution = ac
         .solve_recaptcha_v2(&RecaptchaV2 {
             website_url: "https://store.steampowered.com/join".into(),
             website_key: "6LdIFr0ZAAAAAO3vz0O0OQrtAefzdJcWQM2TMYQH".into(),
             is_enterprise: true,
+            is_invisible: false, // set to "true" if there's "size":"invisible" option in "grecaptcha.enterprise.render" function
             enterprise_payload,
             // api_domain: "recaptcha.net".into(),  // only for a non-google.com script domain
             ..Default::default()
